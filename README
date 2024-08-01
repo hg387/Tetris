@@ -1,1 +1,199 @@
-Tetris
+Thanks for this brain teasing problem, here is the readme consisting of:
+- Project structure
+- Install dependencies
+- How to run the program
+- Sample run
+- Approach and time complexities
+
+- Project structure:
+  tetris
+    __main__.py
+    data
+      input.txt
+    src 
+      __init__.py
+      board.py
+      piece.py
+      tetris_naive.py
+      tetris.py 
+      utils.py
+    tests
+      __init__.py
+      test_input.txt
+      test_tetris.py
+
+
+- Install dependencies:
+  - Python3.8>= is needed for pytest
+  - I have 'python3' as an alias for python version on my machine so please feel free to adjust the python
+    commands to use your alias 
+  - There is only one dependency on pytest that I am using for this project
+  - To make is simpler, I have made 'requirement.txt' to put in all the dependencies
+  - To install the dependencies from 'requirement.txt', get to same directory level as 'requirement.txt'is at 
+    then please use the following command
+    python3 -m pip install -r requirement.txt
+
+
+- How to run the program:
+  - Use of __main__.py
+    - After unzipping the folder, cd into base directory at the same level of 'teris' directory
+    - Sample 'input.txt' has been used to generate the output
+    - I have created __main__.py to make tetris a module so program can be ran using the following command
+      python3 -m tetris < ./input.txt > ./output.txt
+
+- Sample run:
+  - After unzipping the folder, cd into base directory at the same level of 'teris' directory
+  - Here is the sample run using the above method
+    > python3 -m tetris < ./input.txt > ./output.txt
+    > cat ./output.txt
+    2
+    4
+    0
+    2
+    4
+    1
+    0
+    2
+    2
+    2
+    1
+    1
+    4
+    3
+    1
+    2
+    1
+    8
+    8
+    0
+    3
+
+  - Sample pytest run with execution times
+    test_tetris_input_file (tests.test_tetris.TestTetris) ...
+      For inp: Q1 height is 2
+      For inp: Q0,Q1 height is 4
+      For inp: Q0,Q2,Q4,Q6,Q8 height is 0
+      For inp: Q0,Q2,Q4,Q6,Q8,Q1 height is 2
+      For inp: Q0,Q2,Q4,Q6,Q8,Q1,Q1 height is 4
+      For inp: I0,I4,Q8 height is 1
+      For inp: I0,I4,Q8,I0,I4 height is 0
+      For inp: L0,J2,L4,J6,Q8 height is 2
+      For inp: L0,Z1,Z3,Z5,Z7 height is 2
+      For inp: T0,T3 height is 2
+      For inp: T0,T3,I6,I6 height is 1
+      For inp: I0,I6,S4 height is 1
+      For inp: T1,Z3,I4 height is 4
+      For inp: L0,J3,L5,J8,T1 height is 3
+      For inp: L0,J3,L5,J8,T1,T6 height is 1
+      For inp: L0,J3,L5,J8,T1,T6,J2,L6,T0,T7 height is 2
+      For inp: L0,J3,L5,J8,T1,T6,J2,L6,T0,T7,Q4 height is 1
+      For inp: S0,S2,S4,S6 height is 8
+      For inp: S0,S2,S4,S5,Q8,Q8,Q8,Q8,T1,Q1,I0,Q4 height is 8
+      For inp: L0,J3,L5,J8,T1,T6,S2,Z5,T0,T7 height is 0
+      For inp: Q0,I2,I6,I0,I6,I6,Q2,Q4 height is 3
+      Execution time for test_tetris_input_file is 0.11640787124633789
+      ok
+      test_tetris_naive_input_file (tests.test_tetris.TestTetris) ...
+      For inp: Q1 height is 2
+      For inp: Q0,Q1 height is 4
+      For inp: Q0,Q2,Q4,Q6,Q8 height is 0
+      For inp: Q0,Q2,Q4,Q6,Q8,Q1 height is 2
+      For inp: Q0,Q2,Q4,Q6,Q8,Q1,Q1 height is 4
+      For inp: I0,I4,Q8 height is 1
+      For inp: I0,I4,Q8,I0,I4 height is 0
+      For inp: L0,J2,L4,J6,Q8 height is 2
+      For inp: L0,Z1,Z3,Z5,Z7 height is 2
+      For inp: T0,T3 height is 2
+      For inp: T0,T3,I6,I6 height is 1
+      For inp: I0,I6,S4 height is 1
+      For inp: T1,Z3,I4 height is 4
+      For inp: L0,J3,L5,J8,T1 height is 3
+      For inp: L0,J3,L5,J8,T1,T6 height is 1
+      For inp: L0,J3,L5,J8,T1,T6,J2,L6,T0,T7 height is 2
+      For inp: L0,J3,L5,J8,T1,T6,J2,L6,T0,T7,Q4 height is 1
+      For inp: S0,S2,S4,S6 height is 8
+      For inp: S0,S2,S4,S5,Q8,Q8,Q8,Q8,T1,Q1,I0,Q4 height is 8
+      For inp: L0,J3,L5,J8,T1,T6,S2,Z5,T0,T7 height is 0
+      For inp: Q0,I2,I6,I0,I6,I6,Q2,Q4 height is 3
+      Execution time for test_tetris_naive_input_file is 0.13201093673706055
+      ok
+
+      ----------------------------------------------------------------------
+      Ran 2 tests in 0.250s
+
+      OK
+
+- Approach and time complexities:
+  - There are two elements of building this tetris
+    - firtst is how to handle gravity and insert pieces of different shapes
+    - second is how to handle removing rows and shifting the other rows
+
+  - how to handle gravity and insert pieces of different shapes
+    - Here are few points to remember
+      - height of the tetris board is given to be no more than 100
+      - the columns to be no more than 10
+      - let total rows = M and total columns = N
+      - All the pieces have their own rows and columns
+      - so maximum board height = 100 + (piece_rows)
+      - and columns index to insert piece + piece_columns < total columns of board
+
+    - First update the board with placing peice on top of board in the artifical space
+    - As rows and columns in the piece are not big compare to the board
+    - So, iterating over them is contant operation
+    - This operation takes O(num_of_columns_in_piece * num_of_rows_in_piece) = O(k)
+
+    - Logic of insert piece is in insert_piece(inp) method of Tetris class under src.tetris
+    - Now, each peice is of different size so we want to calculate minimum vertical distance
+    - that 'WHOLE peice' could travel with respect to the current tetris board
+
+    - To calculate minium distance, we iterate over start_index of piece to be inserted
+    - and end at start_index + columns of piece
+    - We don't need to iterate over all the board just the affected rows and columns
+
+    - for a column, we would keep index of lowest row in which piece can be moved into
+    - if we found block at the board to be already filled then reduce the index of lowestrow -=1
+    - if we found piece block, we would calculate the distance between piece block and lowest row
+    - we do the same for the whole piece and get the minimum distance
+    - This operation takes itertes over all the rows and just the number of columns in a piece
+    - So, time complexity for this operation is
+      O(number of columns in piece * number of rows in board) = O(M) 
+
+    - After we have the lowest_distance that a piece can travel, we start moving the peice block there
+    - As rows and columns in the piece are not big compare to the board
+    - So, iterating over them is contant operation
+    - This operation takes O(num_of_columns_in_piece * num_of_rows_in_piece) = O(k)
+
+    - Total time taken in handling gravity and inserting a peice of different shapes
+      O(k) + O(M) + O(k) ~= O(M)
+
+  - how to handle removing rows and shifting the other rows
+
+    - One naive way to iterate over all the board and find a completed row
+    - This approach is implemented in tetris_naive.py
+    - The executioin time is compared with the optimized approach in the pytests
+    - Once found the completed row, remove the row and shift rows above it down by 1
+    - Repeat the above two steps until board is free of completed row
+    - The time complexity for this approach would been
+      O(number_of_completed_rows * M * N)
+
+    - Instead of iterating over whole board whenever we found a completed row, 
+    - The optimized way is to store all the indexes of completed row in one board interation
+    - Then, in the second board iteration, shift the each row down depending on number of 
+      completed rows below it
+    - This approach only require two board iterations and implemented in tetris.py
+    - The executioin time is compared with the optimized approach in the pytests
+    - The time complexity for this approach would been
+      O(2 * M * N) ~= O(M * N)
+
+  - Calculate height of the board
+    - Loop through the board column by column,
+    - for each row, if block is filled, then update the height if it is more than the existing
+    - time complexity of this operation is O(M*N)
+    
+  - Total time complexity for a game
+    - For each move, we first insert it, then handle removing rows and shifting the other rows
+    - Let's sat, P = total number of moves in a game
+    - then time complexity is 
+      O(P * (insertion_operation + remove_n_shifting_operation)) + O(height_calculation)
+      = O(P * (M + M*N)) + O(M*N)
+      = O(P*M*N) = O(PMN)
